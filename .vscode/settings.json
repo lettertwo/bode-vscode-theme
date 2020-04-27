@@ -1,0 +1,16 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["themes/*/ui.json"],
+      "url": "./schemas/ui.schema.json"
+    },
+    {
+      "fileMatch": ["themes/*/ansi.json"],
+      "url": "./schemas/ansi.schema.json"
+    },
+    {
+      "fileMatch": ["themes/*/syntax.json"],
+      "url": "./schemas/syntax.schema.json"
+    }
+  ]
+}

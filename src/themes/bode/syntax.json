@@ -1,0 +1,13 @@
+{
+  "comment": "#fff",
+  "constant": "#fff",
+  "entity": "#030303",
+  "invalid": "#fff",
+  "keyword": "#fff",
+  "markup": "#fff",
+  "punctuation": "#fff",
+  "storage": "#fff",
+  "string": "#fff",
+  "support": "#fff",
+  "variable": "#fff"
+}

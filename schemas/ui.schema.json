@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "https://github.com/lettertwo/bode-vscode-theme/schemas/ui.schema.json",
+  "type": "object",
+  "properties": {
+    "shadow": {"format": "color-hex"},
+    "border": {"format": "color-hex"},
+    "background": {"format": "color-hex"},
+    "backgroundAlt": {"format": "color-hex"},
+    "accent": {"format": "color-hex"},
+    "accentAlt": {"format": "color-hex"},
+    "secondaryAccent": {"format": "color-hex"},
+    "secondaryAccentAlt": {"format": "color-hex"},
+    "tertiaryAccent": {"format": "color-hex"},
+    "positive": {"format": "color-hex"},
+    "negative": {"format": "color-hex"},
+    "warning": {"format": "color-hex"},
+    "modified": {"format": "color-hex"},
+    "lightText": {"format": "color-hex"},
+    "darkText": {"format": "color-hex"}
+  }
+}

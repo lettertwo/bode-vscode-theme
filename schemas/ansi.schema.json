@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "https://github.com/lettertwo/bode-vscode-theme/schemas/ansi.schema.json",
+  "type": "object",
+  "properties": {
+    "normal": {
+      "type": "object",
+      "properties": {
+        "blue": {"format": "color-hex"},
+        "cyan": {"format": "color-hex"},
+        "green": {"format": "color-hex"},
+        "magenta": {"format": "color-hex"},
+        "red": {"format": "color-hex"},
+        "yellow": {"format": "color-hex"}
+      }
+    },
+    "bright": {
+      "type": "object",
+      "properties": {
+        "blue": {"format": "color-hex"},
+        "cyan": {"format": "color-hex"},
+        "green": {"format": "color-hex"},
+        "magenta": {"format": "color-hex"},
+        "red": {"format": "color-hex"},
+        "yellow": {"format": "color-hex"}
+      }
+    }
+  }
+}

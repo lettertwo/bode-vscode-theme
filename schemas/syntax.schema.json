@@ -1,0 +1,896 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "https://github.com/lettertwo/bode-vscode-theme/schemas/syntax.schema.json",
+
+  "definitions": {
+    "syntax_color": {
+      "type": "string",
+      "format": "color-hex",
+      "description": "Foreground color. Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA"
+    },
+
+    "syntax_value": {
+      "type": "object",
+      "description": "An object with a \"foreground\" hex color string. Other optional attributes and nested scopes are allowed.",
+      "properties": {
+        "name": {"type": "string"},
+        "foreground": {"$ref": "#/definitions/syntax_color"},
+        "fontStyle": {
+          "description": "\"italic\", \"bold\", \"underline\" or a combination. The empty string unsets inherited settings.",
+          "type": "string",
+          "enum": [
+            "bold underline",
+            "bold",
+            "italic bold underline",
+            "italic bold",
+            "italic underline",
+            "italic",
+            "underline",
+            ""
+          ]
+        }
+      },
+      "additionalProperties": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_scope"},
+          {
+            "description": "A color and style definition for a syntax scope. Additional nested scopes may be be added, where each name maps to a value for a more specfic scope."
+          }
+        ]
+      },
+      "required": ["foreground"]
+    },
+
+    "syntax_scope": {
+      "type": ["string", "object"],
+      "description": "May be a hex color string, or an object with a \"foreground\" hex color string. If an object, other optional attributes and nested scopes are allowed.",
+      "if": {"type": "object"},
+      "then": {"$ref": "#/definitions/syntax_value"},
+      "else": {"$ref": "#/definitions/syntax_color"}
+    }
+  },
+
+  "properties": {
+    "comment": {
+      "type": ["string", "object"],
+      "title": "A single- or multi-line comment",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "line": {
+                "type": ["string", "object"],
+                "title": "A single line comment",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "double_slash": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "// comment"}
+                          ]
+                        },
+                        "double_dash": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "--comment"}
+                          ]
+                        },
+                        "number_sign": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "# comment"}
+                          ]
+                        },
+                        "percentage": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "% comment"}
+                          ]
+                        },
+                        "character": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Other types of line comments"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "block": {
+                "type": ["string", "object"],
+                "title": "Multi-line comment like /* … */ and <!-- … -->.",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "documentation": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Embedded documentation"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "constant": {
+      "type": ["string", "object"],
+      "title": "Various forms of constants",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "numeric": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "A numeric constant, e.g. 42, 1.3f, 0x4AB1U"}
+                ]
+              },
+              "character": {
+                "type": ["string", "object"],
+                "title": "A character constant, e.g. &lt;, \\e, \\031",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "escape": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Escape sequence, e.g. \\e"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "language": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Constants provided by the language, like true, false, nil, YES, NO, etc."
+                  }
+                ]
+              },
+              "other": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Other constants, e.g. colors in CSS"}
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "entity": {
+      "type": ["string", "object"],
+      "title": "A document entity",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "name": {
+                "type": ["string", "object"],
+                "title": "Entity name",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "variable": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "The name of a variable"}
+                          ]
+                        },
+                        "function": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "The name of a function"}
+                          ]
+                        },
+                        "type": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "The name of a type declaration or class"}
+                          ]
+                        },
+                        "tag": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "A tag name"}
+                          ]
+                        },
+                        "section": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "A heading or name of a section"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "other": {
+              "type": ["string", "object"],
+              "title": "Other entities",
+              "if": {"type": "string"},
+              "then": {"$ref": "#/definitions/syntax_color"},
+              "else": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_value"},
+                  {
+                    "properties": {
+                      "inherited-class": {
+                        "allOf": [
+                          {"$ref": "#/definitions/syntax_scope"},
+                          {"title": "The superclass/baseclass name"}
+                        ]
+                      },
+                      "attribute-name": {
+                        "type": ["string", "object"],
+                        "title": "An attribute name, i.e., for a tag",
+                        "if": {"type": "string"},
+                        "then": {
+                          "$ref": "#/definitions/syntax_color"
+                        },
+                        "else": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_value"},
+                            {
+                              "properties": {
+                                "id": {
+                                  "allOf": [
+                                    {"$ref": "#/definitions/syntax_scope"},
+                                    {"title": "Css ID selector"}
+                                  ]
+                                },
+                                "pseudo-element": {
+                                  "allOf": [
+                                    {"$ref": "#/definitions/syntax_scope"},
+                                    {"title": "Css pseudo element"}
+                                  ]
+                                },
+                                "pseudo-class": {
+                                  "allOf": [
+                                    {"$ref": "#/definitions/syntax_scope"},
+                                    {"title": "Css pseudo class"}
+                                  ]
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "invalid": {
+      "type": ["string", "object"],
+      "title": "Stuff which is \"invalid\"",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "illegal": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Illegal, e.g. an ampersand or lower-than character in HTML (which is not part of an entity/tag)."
+                  }
+                ]
+              },
+              "deprecated": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Deprecated, e.g. using an API function which is deprecated or using styling with strict HTML."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "keyword": {
+      "type": ["string", "object"],
+      "title": "Keyword, (when these do not fall into the other groups).",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "control": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Control, mainly related to flow control like continue, while, return, etc."
+                  }
+                ]
+              },
+              "operator": {
+                "type": ["string", "object"],
+                "title": "Operators can either be textual (e.g. or) or be characters",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "new": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "New operator, e.g. new Foo()"}
+                          ]
+                        },
+                        "expression": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Operators used in expressions"}
+                          ]
+                        },
+                        "logical": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Logical operator, e.g. ! && ||"}
+                          ]
+                        },
+                        "delete": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Delete operator, e.g. delete foo.bar"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "other": {
+                "type": ["string", "object"],
+                "title": "Other keyword",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "unit": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Unit, e.g. em, px, etc"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "markup": {
+      "type": ["string", "object"],
+      "title": "Markup",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "underline": {
+                "type": ["string", "object"],
+                "title": "Underlined text",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "link": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Underlined link"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "bold": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Bold text. Text which is strong and similar should preferably be derived from this name"
+                  }
+                ]
+              },
+              "heading": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "A section header. Optionally provide the heading level as the next element, for example markup.heading.2.html for <h2>…</h2> in HTML."
+                  }
+                ]
+              },
+              "italic": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Italic text. Text which is emphasized and similar should preferably be derived from this name"
+                  }
+                ]
+              },
+              "list": {
+                "type": ["string", "object"],
+                "title": "List items",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "numbered": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Numbered list item"}
+                          ]
+                        },
+                        "unumbered": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Unumbered list item"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "quote": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Quoted (sometimes block quoted) text"}
+                ]
+              },
+              "inline": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Inline code"}
+                ]
+              },
+              "fenced_code": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Fenced code"}
+                ]
+              },
+              "raw": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Verbatim text"}
+                ]
+              },
+              "other": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Other markup constructs"}
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "punctuation": {
+      "type": ["string", "object"],
+      "title": "Punctuation",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "definition": {
+                "type": ["string", "object"],
+                "title": "punctuation characters denoting a definition",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "tag": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Tag brackets, e.g. <tag />"}
+                          ]
+                        },
+                        "template-expression": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {
+                              "title": "Template expression punctuation, e.g. `template`"
+                            }
+                          ]
+                        },
+                        "list": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Markup list punctuation, e.g. - item"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "separator": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Key/value separators, e.g. key: value"}
+                ]
+              },
+              "section": {
+                "type": ["string", "object"],
+                "title": "Punctuation characters denoting a section",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "embedded": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Embedded section punctuation"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "storage": {
+      "type": ["string", "object"],
+      "title": "Value storage declarations, e.g. class, function, var",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "type": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "The type of something, e.g. class, function, int, var, etc. "
+                  }
+                ]
+              },
+              "modifier": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "A storage modifier, e.g. static, final, abstract, etc."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "string": {
+      "type": ["string", "object"],
+      "title": "String",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "quoted": {
+                "type": ["string", "object"],
+                "title": "Quoted string",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "single": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Single quoted string, e.g. 'foo'"}
+                          ]
+                        },
+                        "double": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Double quoted string, e.g. \"foo\""}
+                          ]
+                        },
+                        "triple": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {
+                              "title": "Triple quoted string, e.g. \"\"\"Python\"\"\""
+                            }
+                          ]
+                        },
+                        "other": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {
+                              "title": "Other types of quoting, e.g. $'shell', %s{...}."
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "unquoted": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Unquoted string, for things like here-docs and here-strings."
+                  }
+                ]
+              },
+              "interpolated": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Interpolated string, Strings which are “evaluated”, e.g. `date`, $(pwd)."
+                  }
+                ]
+              },
+              "regexp": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Regular expression, e.g. /(\\w+)/"}
+                ]
+              },
+              "other": {
+                "type": ["string", "object"],
+                "title": "Other types of string. Should rarely be used",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "link": {
+                          "allOf": [
+                            {"$ref": "#/definitions/syntax_scope"},
+                            {"title": "Markup link description"}
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "support": {
+      "type": ["string", "object"],
+      "title": "Things provided by a framework or library",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "function": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Function provided by the framework/library, For example NSLog in Objective-C is support.function."
+                  }
+                ]
+              },
+              "class": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Class provided by the framework/library"}
+                ]
+              },
+              "type": {
+                "type": ["string", "object"],
+                "title": "Type provided by the framework/library, This is probably only used for languages derived from C, which has typedef (and struct). Most other languages would introduce new types as classes.",
+                "if": {"type": "string"},
+                "then": {"$ref": "#/definitions/syntax_color"},
+                "else": {
+                  "allOf": [
+                    {"$ref": "#/definitions/syntax_value"},
+                    {
+                      "properties": {
+                        "property-name": {
+                          "type": ["string", "object"],
+                          "title": "Object/JSON property names",
+                          "if": {"type": "string"},
+                          "then": {"$ref": "#/definitions/syntax_color"},
+                          "else": {
+                            "allOf": [
+                              {"$ref": "#/definitions/syntax_value"},
+                              {
+                                "properties": {
+                                  "css": {
+                                    "allOf": [
+                                      {"$ref": "#/definitions/syntax_scope"},
+                                      {"title": "CSS property name"}
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constant": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Constants (magic values) provided by the framework/library"
+                  }
+                ]
+              },
+              "variable": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Variables provided by the framework/library, e.g. NSApp in AppKit."
+                  }
+                ]
+              },
+              "other": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Other constructs provided by the framework/library"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "variable": {
+      "type": ["string", "object"],
+      "title": "Variable",
+      "if": {"type": "string"},
+      "then": {"$ref": "#/definitions/syntax_color"},
+      "else": {
+        "allOf": [
+          {"$ref": "#/definitions/syntax_value"},
+          {
+            "properties": {
+              "parameter": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Parameter"}
+                ]
+              },
+              "language": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {
+                    "title": "Reserved language variable, e.g. this, super, self, etc."
+                  }
+                ]
+              },
+              "other": {
+                "allOf": [
+                  {"$ref": "#/definitions/syntax_scope"},
+                  {"title": "Other variables, e.g. $some_variables"}
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+
+  "required": [
+    "comment",
+    "constant",
+    "entity",
+    "invalid",
+    "keyword",
+    "markup",
+    "punctuation",
+    "storage",
+    "string",
+    "support",
+    "variable"
+  ]
+}
