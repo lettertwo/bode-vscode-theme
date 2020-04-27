@@ -20,8 +20,10 @@
     ]
   },
   "scripts": {
+    "vscode:prepublish": "npm run build",
     "build": "ts-node ./src/build.ts",
-    "watch": "ts-node-dev --respawn ./src/build.ts"
+    "watch": "ts-node-dev --respawn ./src/build.ts",
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
     "@types/mustache": "4.0.1",
