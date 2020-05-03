@@ -6,24 +6,30 @@
     "normal": {
       "type": "object",
       "properties": {
-        "blue": {"format": "color-hex"},
-        "cyan": {"format": "color-hex"},
-        "green": {"format": "color-hex"},
-        "magenta": {"format": "color-hex"},
-        "red": {"format": "color-hex"},
-        "yellow": {"format": "color-hex"}
-      }
+        "blue": {"type": "string", "format": "color-hex"},
+        "cyan": {"type": "string", "format": "color-hex"},
+        "green": {"type": "string", "format": "color-hex"},
+        "magenta": {"type": "string", "format": "color-hex"},
+        "red": {"type": "string", "format": "color-hex"},
+        "yellow": {"type": "string", "format": "color-hex"}
+      },
+      "required": ["blue", "cyan", "green", "magenta", "red", "yellow"],
+      "additionalProperties": false
     },
     "bright": {
       "type": "object",
       "properties": {
-        "blue": {"format": "color-hex"},
-        "cyan": {"format": "color-hex"},
-        "green": {"format": "color-hex"},
-        "magenta": {"format": "color-hex"},
-        "red": {"format": "color-hex"},
-        "yellow": {"format": "color-hex"}
-      }
+        "blue": {"type": "string", "format": "color-hex"},
+        "cyan": {"type": "string", "format": "color-hex"},
+        "green": {"type": "string", "format": "color-hex"},
+        "magenta": {"type": "string", "format": "color-hex"},
+        "red": {"type": "string", "format": "color-hex"},
+        "yellow": {"type": "string", "format": "color-hex"}
+      },
+      "required": ["blue", "cyan", "green", "magenta", "red", "yellow"],
+      "additionalProperties": false
     }
-  }
+  },
+  "required": ["normal", "bright"],
+  "additionalProperties": false
 }

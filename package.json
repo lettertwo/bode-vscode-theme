@@ -23,6 +23,7 @@
     "vscode:prepublish": "npm run build",
     "build": "ts-node ./src/build.ts",
     "watch": "ts-node-dev --respawn ./src/build.ts",
+    "typegen": "json2ts -i schemas/ -o types/",
     "lint": "eslint src --ext ts"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "@typescript-eslint/parser": "2.29.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
+    "json-schema-to-typescript": "8.2.0",
     "mustache": "4.0.1",
     "prettier": "2.0.5",
     "ts-node": "8.9.0",
