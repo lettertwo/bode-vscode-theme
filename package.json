@@ -19,6 +19,8 @@
       }
     ]
   },
+  "license": "MIT",
+  "repository": "github:lettertwo/bode-vscode-theme",
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "ts-node ./src/build.ts",
