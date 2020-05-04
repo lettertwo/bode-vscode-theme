@@ -5,37 +5,38 @@
   "definitions": {
     "syntax_color": {
       "type": "string",
-      "format": "color-hex",
-      "description": "Foreground color. Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA"
+      "format": "color-hex"
+    },
+
+    "syntax_font_style": {
+      "type": "string",
+      "enum": [
+        "bold",
+        "bold italic",
+        "bold italic underline",
+        "bold underline",
+        "bold underline italic",
+        "italic",
+        "italic bold",
+        "italic bold underline",
+        "italic underline",
+        "italic underline bold",
+        "underline",
+        "underline bold",
+        "underline bold italic",
+        "underline italic",
+        "underline italic bold",
+        ""
+      ]
     },
 
     "syntax_value": {
       "type": "object",
-      "description": "An object with a \"foreground\" hex color string. Other optional attributes and nested scopes are allowed.",
+      "additionalProperties": false,
       "required": ["foreground"],
       "properties": {
-        "name": {"type": "string"},
         "foreground": {"$ref": "#/definitions/syntax_color"},
-        "fontStyle": {
-          "description": "\"italic\", \"bold\", \"underline\" or a combination. The empty string unsets inherited settings.",
-          "type": "string",
-          "enum": [
-            "bold underline",
-            "bold",
-            "italic bold underline",
-            "italic bold",
-            "italic underline",
-            "italic",
-            "underline",
-            ""
-          ]
-        }
-      },
-      "additionalProperties": {
-        "anyOf": [
-          {"$ref": "#/definitions/syntax_color"},
-          {"$ref": "#/definitions/syntax_value"}
-        ]
+        "fontStyle": {"$ref": "#/definitions/syntax_font_style"}
       }
     }
   },

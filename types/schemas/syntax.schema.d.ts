@@ -5,10 +5,24 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-/**
- * Foreground color. Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA
- */
 export type SyntaxColor = string;
+export type SyntaxFontStyle =
+  | "bold"
+  | "bold italic"
+  | "bold italic underline"
+  | "bold underline"
+  | "bold underline italic"
+  | "italic"
+  | "italic bold"
+  | "italic bold underline"
+  | "italic underline"
+  | "italic underline bold"
+  | "underline"
+  | "underline bold"
+  | "underline bold italic"
+  | "underline italic"
+  | "underline italic bold"
+  | "";
 
 export interface SyntaxSchema {
   /**
@@ -419,23 +433,7 @@ export interface SyntaxSchema {
         other?: SyntaxColor | SyntaxValue;
       });
 }
-/**
- * An object with a "foreground" hex color string. Other optional attributes and nested scopes are allowed.
- */
 export interface SyntaxValue {
-  name?: string;
   foreground: SyntaxColor;
-  /**
-   * "italic", "bold", "underline" or a combination. The empty string unsets inherited settings.
-   */
-  fontStyle?:
-    | "bold underline"
-    | "bold"
-    | "italic bold underline"
-    | "italic bold"
-    | "italic underline"
-    | "italic"
-    | "underline"
-    | "";
-  [k: string]: SyntaxColor | SyntaxValue;
+  fontStyle?: SyntaxFontStyle;
 }
