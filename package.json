@@ -25,7 +25,7 @@
     "vscode:prepublish": "npm run build",
     "build": "ts-node ./src/build.ts",
     "watch": "ts-node-dev --respawn ./src/build.ts",
-    "typegen": "json2ts -i schemas/ -o types/",
+    "typegen": "json2ts --strictIndexSignatures -i schemas/ -o types/",
     "lint": "eslint src --ext ts"
   },
   "devDependencies": {

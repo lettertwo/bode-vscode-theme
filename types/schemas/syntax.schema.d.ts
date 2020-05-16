@@ -5,7 +5,13 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA
+ */
 export type SyntaxColor = string;
+/**
+ * "bold", "underline", "italic", or a combination. An empty string unsets an inherited style.
+ */
 export type SyntaxFontStyle =
   | "bold"
   | "bold italic"
@@ -30,13 +36,17 @@ export interface SyntaxSchema {
    */
   comment:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * A single line comment
          */
         line?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * // comment
                */
@@ -57,25 +67,32 @@ export interface SyntaxSchema {
                * Other types of line comments
                */
               character?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Multi-line comment like /* … * / and <!-- … -->.
          */
         block?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Embedded documentation
                */
               documentation?: SyntaxColor | SyntaxValue;
-            });
-      });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Various forms of constants
    */
   constant:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * A numeric constant, e.g. 42, 1.3f, 0x4AB1U
          */
@@ -85,12 +102,15 @@ export interface SyntaxSchema {
          */
         character?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Escape sequence, e.g. \e
                */
               escape?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Constants provided by the language, like true, false, nil, YES, NO, etc.
          */
@@ -99,19 +119,24 @@ export interface SyntaxSchema {
          * Other constants, e.g. colors in CSS
          */
         other?: SyntaxColor | SyntaxValue;
-      });
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * A document entity
    */
   entity:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Entity name
          */
         name?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * The name of a variable
                */
@@ -132,14 +157,18 @@ export interface SyntaxSchema {
                * A heading or name of a section
                */
               section?: SyntaxColor | SyntaxValue;
-            });
-      });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Stuff which is "invalid"
    */
   invalid:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Illegal, e.g. an ampersand or lower-than character in HTML (which is not part of an entity/tag).
          */
@@ -148,13 +177,16 @@ export interface SyntaxSchema {
          * Deprecated, e.g. using an API function which is deprecated or using styling with strict HTML.
          */
         deprecated?: SyntaxColor | SyntaxValue;
-      });
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Keyword, (when these do not fall into the other groups).
    */
   keyword:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Control, mainly related to flow control like continue, while, return, etc.
          */
@@ -164,7 +196,9 @@ export interface SyntaxSchema {
          */
         operator?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * New operator, e.g. new Foo()
                */
@@ -181,36 +215,46 @@ export interface SyntaxSchema {
                * Delete operator, e.g. delete foo.bar
                */
               delete?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Other keyword
          */
         other?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Unit, e.g. em, px, etc
                */
               unit?: SyntaxColor | SyntaxValue;
-            });
-      });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Markup
    */
   markup:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Underlined text
          */
         underline?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Underlined link
                */
               link?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Bold text. Text which is strong and similar should preferably be derived from this name
          */
@@ -228,7 +272,9 @@ export interface SyntaxSchema {
          */
         list?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Numbered list item
                */
@@ -237,7 +283,8 @@ export interface SyntaxSchema {
                * Unumbered list item
                */
               unumbered?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Quoted (sometimes block quoted) text
          */
@@ -258,19 +305,24 @@ export interface SyntaxSchema {
          * Other markup constructs
          */
         other?: SyntaxColor | SyntaxValue;
-      });
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Punctuation
    */
   punctuation:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * punctuation characters denoting a definition
          */
         definition?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Tag brackets, e.g. <tag />
                */
@@ -283,7 +335,8 @@ export interface SyntaxSchema {
                * Markup list punctuation, e.g. - item
                */
               list?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Key/value separators, e.g. key: value
          */
@@ -293,19 +346,25 @@ export interface SyntaxSchema {
          */
         section?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Embedded section punctuation
                */
               embedded?: SyntaxColor | SyntaxValue;
-            });
-      });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Value storage declarations, e.g. class, function, var
    */
   storage:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * The type of something, e.g. class, function, int, var, etc.
          */
@@ -314,19 +373,24 @@ export interface SyntaxSchema {
          * A storage modifier, e.g. static, final, abstract, etc.
          */
         modifier?: SyntaxColor | SyntaxValue;
-      });
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * String
    */
   string:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Quoted string
          */
         quoted?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Single quoted string, e.g. 'foo'
                */
@@ -343,7 +407,8 @@ export interface SyntaxSchema {
                * Other types of quoting, e.g. $'shell', %s{...}.
                */
               other?: SyntaxColor | SyntaxValue;
-            });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Unquoted string, for things like here-docs and here-strings.
          */
@@ -361,19 +426,25 @@ export interface SyntaxSchema {
          */
         other?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Markup link description
                */
               link?: SyntaxColor | SyntaxValue;
-            });
-      });
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Things provided by a framework or library
    */
   support:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Function provided by the framework/library, For example NSLog in Objective-C is support.function.
          */
@@ -387,19 +458,25 @@ export interface SyntaxSchema {
          */
         type?:
           | SyntaxColor
-          | (SyntaxValue & {
+          | {
+              foreground?: SyntaxColor;
+              fontStyle?: SyntaxFontStyle;
               /**
                * Object/JSON property names
                */
               "property-name"?:
                 | SyntaxColor
-                | (SyntaxValue & {
+                | {
+                    foreground?: SyntaxColor;
+                    fontStyle?: SyntaxFontStyle;
                     /**
                      * CSS property name
                      */
                     css?: SyntaxColor | SyntaxValue;
-                  });
-            });
+                    [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+                  };
+              [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+            };
         /**
          * Constants (magic values) provided by the framework/library
          */
@@ -412,13 +489,16 @@ export interface SyntaxSchema {
          * Other constructs provided by the framework/library
          */
         other?: SyntaxColor | SyntaxValue;
-      });
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
   /**
    * Variable
    */
   variable:
     | SyntaxColor
-    | (SyntaxValue & {
+    | {
+        foreground?: SyntaxColor;
+        fontStyle?: SyntaxFontStyle;
         /**
          * Parameter
          */
@@ -431,9 +511,11 @@ export interface SyntaxSchema {
          * Other variables, e.g. $some_variables
          */
         other?: SyntaxColor | SyntaxValue;
-      });
+        [k: string]: (SyntaxColor | SyntaxValue) | undefined;
+      };
 }
 export interface SyntaxValue {
-  foreground: SyntaxColor;
+  foreground?: SyntaxColor;
   fontStyle?: SyntaxFontStyle;
+  [k: string]: (SyntaxColor | SyntaxValue) | undefined;
 }

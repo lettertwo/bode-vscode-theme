@@ -5,7 +5,8 @@
   "definitions": {
     "syntax_color": {
       "type": "string",
-      "format": "color-hex"
+      "format": "color-hex",
+      "description": "Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA"
     },
 
     "syntax_font_style": {
@@ -27,16 +28,21 @@
         "underline italic",
         "underline italic bold",
         ""
-      ]
+      ],
+      "description": "\"bold\", \"underline\", \"italic\", or a combination. An empty string unsets an inherited style."
     },
 
     "syntax_value": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["foreground"],
       "properties": {
         "foreground": {"$ref": "#/definitions/syntax_color"},
         "fontStyle": {"$ref": "#/definitions/syntax_font_style"}
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {"$ref": "#/definitions/syntax_color"},
+          {"$ref": "#/definitions/syntax_value"}
+        ]
       }
     }
   },
@@ -62,88 +68,102 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "line": {
-                  "description": "A single line comment",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "double_slash": {
-                              "description": "// comment",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "double_dash": {
-                              "description": "--comment",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "number_sign": {
-                              "description": "# comment",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "percentage": {
-                              "description": "% comment",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "character": {
-                              "description": "Other types of line comments",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "line": {
+              "description": "A single line comment",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "double_slash": {
+                      "description": "// comment",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "double_dash": {
+                      "description": "--comment",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "number_sign": {
+                      "description": "# comment",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "percentage": {
+                      "description": "% comment",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "character": {
+                      "description": "Other types of line comments",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
-                },
-                "block": {
-                  "description": "Multi-line comment like /* … */ and <!-- … -->.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "documentation": {
-                              "description": "Embedded documentation",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "block": {
+              "description": "Multi-line comment like /* … */ and <!-- … -->.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "documentation": {
+                      "description": "Embedded documentation",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    }
+                  }
+                }
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -153,58 +173,66 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "numeric": {
-                  "description": "A numeric constant, e.g. 42, 1.3f, 0x4AB1U",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "character": {
-                  "description": "A character constant, e.g. &lt;, \\e, \\031",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "escape": {
-                              "description": "Escape sequence, e.g. \\e",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "numeric": {
+              "description": "A numeric constant, e.g. 42, 1.3f, 0x4AB1U",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "character": {
+              "description": "A character constant, e.g. &lt;, \\e, \\031",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "escape": {
+                      "description": "Escape sequence, e.g. \\e",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
-                },
-                "language": {
-                  "description": "Constants provided by the language, like true, false, nil, YES, NO, etc.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "other": {
-                  "description": "Other constants, e.g. colors in CSS",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "language": {
+              "description": "Constants provided by the language, like true, false, nil, YES, NO, etc.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "other": {
+              "description": "Other constants, e.g. colors in CSS",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -214,131 +242,149 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "name": {
-                  "description": "Entity name",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "variable": {
-                              "description": "The name of a variable",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "function": {
-                              "description": "The name of a function",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "type": {
-                              "description": "The name of a type declaration or class",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "tag": {
-                              "description": "A tag name",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "section": {
-                              "description": "A heading or name of a section",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "name": {
+              "description": "Entity name",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "variable": {
+                      "description": "The name of a variable",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "function": {
+                      "description": "The name of a function",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "type": {
+                      "description": "The name of a type declaration or class",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "tag": {
+                      "description": "A tag name",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "section": {
+                      "description": "A heading or name of a section",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
+                  }
                 }
-              },
-              "other": {
-                "description": "Other entities",
-                "anyOf": [
-                  {"$ref": "#/definitions/syntax_color"},
-                  {
-                    "allOf": [
-                      {"$ref": "#/definitions/syntax_value"},
+              ]
+            }
+          },
+          "other": {
+            "description": "Other entities",
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {"$ref": "#/definitions/syntax_color"},
+                    {"$ref": "#/definitions/syntax_value"}
+                  ]
+                },
+                "properties": {
+                  "foreground": {"$ref": "#/definitions/syntax_color"},
+                  "fontStyle": {
+                    "$ref": "#/definitions/syntax_font_style"
+                  },
+                  "inherited-class": {
+                    "description": "The superclass/baseclass name",
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "attribute-name": {
+                    "description": "An attribute name, i.e., for a tag",
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
                       {
-                        "additionalProperties": false,
+                        "additionalProperties": {
+                          "anyOf": [
+                            {"$ref": "#/definitions/syntax_color"},
+                            {"$ref": "#/definitions/syntax_value"}
+                          ]
+                        },
                         "properties": {
-                          "inherited-class": {
-                            "description": "The superclass/baseclass name",
+                          "foreground": {
+                            "$ref": "#/definitions/syntax_color"
+                          },
+                          "fontStyle": {
+                            "$ref": "#/definitions/syntax_font_style"
+                          },
+                          "id": {
+                            "description": "Css ID selector",
                             "anyOf": [
-                              {"$ref": "#/definitions/syntax_color"},
+                              {
+                                "$ref": "#/definitions/syntax_color"
+                              },
                               {"$ref": "#/definitions/syntax_value"}
                             ]
                           },
-                          "attribute-name": {
-                            "description": "An attribute name, i.e., for a tag",
+                          "pseudo-element": {
+                            "description": "Css pseudo element",
                             "anyOf": [
-                              {"$ref": "#/definitions/syntax_color"},
                               {
-                                "allOf": [
-                                  {"$ref": "#/definitions/syntax_value"},
-                                  {
-                                    "additionalProperties": false,
-                                    "properties": {
-                                      "id": {
-                                        "description": "Css ID selector",
-                                        "anyOf": [
-                                          {
-                                            "$ref": "#/definitions/syntax_color"
-                                          },
-                                          {"$ref": "#/definitions/syntax_value"}
-                                        ]
-                                      },
-                                      "pseudo-element": {
-                                        "description": "Css pseudo element",
-                                        "anyOf": [
-                                          {
-                                            "$ref": "#/definitions/syntax_color"
-                                          },
-                                          {"$ref": "#/definitions/syntax_value"}
-                                        ]
-                                      },
-                                      "pseudo-class": {
-                                        "description": "Css pseudo class",
-                                        "anyOf": [
-                                          {
-                                            "$ref": "#/definitions/syntax_color"
-                                          },
-                                          {"$ref": "#/definitions/syntax_value"}
-                                        ]
-                                      }
-                                    }
-                                  }
-                                ]
-                              }
+                                "$ref": "#/definitions/syntax_color"
+                              },
+                              {"$ref": "#/definitions/syntax_value"}
+                            ]
+                          },
+                          "pseudo-class": {
+                            "description": "Css pseudo class",
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/syntax_color"
+                              },
+                              {"$ref": "#/definitions/syntax_value"}
                             ]
                           }
                         }
                       }
                     ]
                   }
-                ]
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       ]
     },
@@ -348,28 +394,30 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "illegal": {
-                  "description": "Illegal, e.g. an ampersand or lower-than character in HTML (which is not part of an entity/tag).",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "deprecated": {
-                  "description": "Deprecated, e.g. using an API function which is deprecated or using styling with strict HTML.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                }
-              }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "illegal": {
+              "description": "Illegal, e.g. an ampersand or lower-than character in HTML (which is not part of an entity/tag).",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "deprecated": {
+              "description": "Deprecated, e.g. using an API function which is deprecated or using styling with strict HTML.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -379,88 +427,102 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "control": {
-                  "description": "Control, mainly related to flow control like continue, while, return, etc.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "operator": {
-                  "description": "Operators can either be textual (e.g. or) or be characters",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "new": {
-                              "description": "New operator, e.g. new Foo()",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "expression": {
-                              "description": "Operators used in expressions",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "logical": {
-                              "description": "Logical operator, e.g. ! && ||",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "delete": {
-                              "description": "Delete operator, e.g. delete foo.bar",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "control": {
+              "description": "Control, mainly related to flow control like continue, while, return, etc.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "operator": {
+              "description": "Operators can either be textual (e.g. or) or be characters",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "new": {
+                      "description": "New operator, e.g. new Foo()",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "expression": {
+                      "description": "Operators used in expressions",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "logical": {
+                      "description": "Logical operator, e.g. ! && ||",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "delete": {
+                      "description": "Delete operator, e.g. delete foo.bar",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
-                },
-                "other": {
-                  "description": "Other keyword",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "unit": {
-                              "description": "Unit, e.g. em, px, etc",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "other": {
+              "description": "Other keyword",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "unit": {
+                      "description": "Unit, e.g. em, px, etc",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    }
+                  }
+                }
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -470,123 +532,137 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "underline": {
-                  "description": "Underlined text",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "link": {
-                              "description": "Underlined link",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "underline": {
+              "description": "Underlined text",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "link": {
+                      "description": "Underlined link",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
-                },
-                "bold": {
-                  "description": "Bold text. Text which is strong and similar should preferably be derived from this name",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "heading": {
-                  "description": "A section header. Optionally provide the heading level as the next element, for example markup.heading.2.html for <h2>…</h2> in HTML.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "italic": {
-                  "description": "Italic text. Text which is emphasized and similar should preferably be derived from this name",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "list": {
-                  "description": "List items",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "numbered": {
-                              "description": "Numbered list item",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "unumbered": {
-                              "description": "Unumbered list item",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "quote": {
-                  "description": "Quoted (sometimes block quoted) text",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "inline": {
-                  "description": "Inline code",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "fenced_code": {
-                  "description": "Fenced code",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "raw": {
-                  "description": "Verbatim text",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "other": {
-                  "description": "Other markup constructs",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "bold": {
+              "description": "Bold text. Text which is strong and similar should preferably be derived from this name",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "heading": {
+              "description": "A section header. Optionally provide the heading level as the next element, for example markup.heading.2.html for <h2>…</h2> in HTML.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "italic": {
+              "description": "Italic text. Text which is emphasized and similar should preferably be derived from this name",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "list": {
+              "description": "List items",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "numbered": {
+                      "description": "Numbered list item",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "unumbered": {
+                      "description": "Unumbered list item",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "quote": {
+              "description": "Quoted (sometimes block quoted) text",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "inline": {
+              "description": "Inline code",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "fenced_code": {
+              "description": "Fenced code",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "raw": {
+              "description": "Verbatim text",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "other": {
+              "description": "Other markup constructs",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -596,81 +672,95 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "definition": {
-                  "description": "punctuation characters denoting a definition",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "tag": {
-                              "description": "Tag brackets, e.g. <tag />",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "template-expression": {
-                              "description": "Template expression punctuation, e.g. `template`",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "list": {
-                              "description": "Markup list punctuation, e.g. - item",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "definition": {
+              "description": "punctuation characters denoting a definition",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "tag": {
+                      "description": "Tag brackets, e.g. <tag />",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "template-expression": {
+                      "description": "Template expression punctuation, e.g. `template`",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "list": {
+                      "description": "Markup list punctuation, e.g. - item",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
-                },
-                "separator": {
-                  "description": "Key/value separators, e.g. key: value",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "section": {
-                  "description": "Punctuation characters denoting a section",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "embedded": {
-                              "description": "Embedded section punctuation",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "separator": {
+              "description": "Key/value separators, e.g. key: value",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "section": {
+              "description": "Punctuation characters denoting a section",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "embedded": {
+                      "description": "Embedded section punctuation",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    }
+                  }
+                }
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -680,28 +770,30 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "type": {
-                  "description": "The type of something, e.g. class, function, int, var, etc.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "modifier": {
-                  "description": "A storage modifier, e.g. static, final, abstract, etc.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                }
-              }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "type": {
+              "description": "The type of something, e.g. class, function, int, var, etc.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "modifier": {
+              "description": "A storage modifier, e.g. static, final, abstract, etc.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -711,102 +803,116 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "quoted": {
-                  "description": "Quoted string",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "single": {
-                              "description": "Single quoted string, e.g. 'foo'",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "double": {
-                              "description": "Double quoted string, e.g. \"foo\"",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "triple": {
-                              "description": "Triple quoted string, e.g. \"\"\"Python\"\"\"",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            },
-                            "other": {
-                              "description": "Other types of quoting, e.g. $'shell', %s{...}.",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "quoted": {
+              "description": "Quoted string",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "single": {
+                      "description": "Single quoted string, e.g. 'foo'",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "double": {
+                      "description": "Double quoted string, e.g. \"foo\"",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "triple": {
+                      "description": "Triple quoted string, e.g. \"\"\"Python\"\"\"",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    },
+                    "other": {
+                      "description": "Other types of quoting, e.g. $'shell', %s{...}.",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
                       ]
                     }
-                  ]
-                },
-                "unquoted": {
-                  "description": "Unquoted string, for things like here-docs and here-strings.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "interpolated": {
-                  "description": "Interpolated string, Strings which are “evaluated”, e.g. `date`, $(pwd).",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "regexp": {
-                  "description": "Regular expression, e.g. /(\\w+)/",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "other": {
-                  "description": "Other types of string. Should rarely be used",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
-                        {
-                          "additionalProperties": false,
-                          "properties": {
-                            "link": {
-                              "description": "Markup link description",
-                              "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
-                                {"$ref": "#/definitions/syntax_value"}
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "unquoted": {
+              "description": "Unquoted string, for things like here-docs and here-strings.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "interpolated": {
+              "description": "Interpolated string, Strings which are “evaluated”, e.g. `date`, $(pwd).",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "regexp": {
+              "description": "Regular expression, e.g. /(\\w+)/",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "other": {
+              "description": "Other types of string. Should rarely be used",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "link": {
+                      "description": "Markup link description",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
+                        {"$ref": "#/definitions/syntax_value"}
+                      ]
+                    }
+                  }
+                }
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -816,59 +922,75 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "function": {
-                  "description": "Function provided by the framework/library, For example NSLog in Objective-C is support.function.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "class": {
-                  "description": "Class provided by the framework/library",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "type": {
-                  "description": "Type provided by the framework/library, This is probably only used for languages derived from C, which has typedef (and struct). Most other languages would introduce new types as classes.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {
-                      "allOf": [
-                        {"$ref": "#/definitions/syntax_value"},
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "function": {
+              "description": "Function provided by the framework/library, For example NSLog in Objective-C is support.function.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "class": {
+              "description": "Class provided by the framework/library",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "type": {
+              "description": "Type provided by the framework/library, This is probably only used for languages derived from C, which has typedef (and struct). Most other languages would introduce new types as classes.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {"$ref": "#/definitions/syntax_color"},
+                      {"$ref": "#/definitions/syntax_value"}
+                    ]
+                  },
+                  "properties": {
+                    "foreground": {
+                      "$ref": "#/definitions/syntax_color"
+                    },
+                    "fontStyle": {
+                      "$ref": "#/definitions/syntax_font_style"
+                    },
+                    "property-name": {
+                      "description": "Object/JSON property names",
+                      "anyOf": [
+                        {"$ref": "#/definitions/syntax_color"},
                         {
-                          "additionalProperties": false,
+                          "additionalProperties": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/definitions/syntax_color"
+                              },
+                              {"$ref": "#/definitions/syntax_value"}
+                            ]
+                          },
                           "properties": {
-                            "property-name": {
-                              "description": "Object/JSON property names",
+                            "foreground": {
+                              "$ref": "#/definitions/syntax_color"
+                            },
+                            "fontStyle": {
+                              "$ref": "#/definitions/syntax_font_style"
+                            },
+                            "css": {
+                              "description": "CSS property name",
                               "anyOf": [
-                                {"$ref": "#/definitions/syntax_color"},
                                 {
-                                  "allOf": [
-                                    {"$ref": "#/definitions/syntax_value"},
-                                    {
-                                      "additionalProperties": false,
-                                      "properties": {
-                                        "css": {
-                                          "description": "CSS property name",
-                                          "anyOf": [
-                                            {
-                                              "$ref": "#/definitions/syntax_color"
-                                            },
-                                            {
-                                              "$ref": "#/definitions/syntax_value"
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    }
-                                  ]
+                                  "$ref": "#/definitions/syntax_color"
+                                },
+                                {
+                                  "$ref": "#/definitions/syntax_value"
                                 }
                               ]
                             }
@@ -876,32 +998,32 @@
                         }
                       ]
                     }
-                  ]
-                },
-                "constant": {
-                  "description": "Constants (magic values) provided by the framework/library",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "variable": {
-                  "description": "Variables provided by the framework/library, e.g. NSApp in AppKit.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "other": {
-                  "description": "Other constructs provided by the framework/library",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
+                  }
                 }
-              }
+              ]
+            },
+            "constant": {
+              "description": "Constants (magic values) provided by the framework/library",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "variable": {
+              "description": "Variables provided by the framework/library, e.g. NSApp in AppKit.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "other": {
+              "description": "Other constructs provided by the framework/library",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
             }
-          ]
+          }
         }
       ]
     },
@@ -911,35 +1033,37 @@
       "anyOf": [
         {"$ref": "#/definitions/syntax_color"},
         {
-          "allOf": [
-            {"$ref": "#/definitions/syntax_value"},
-            {
-              "additionalProperties": false,
-              "properties": {
-                "parameter": {
-                  "description": "Parameter",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "language": {
-                  "description": "Reserved language variable, e.g. this, super, self, etc.",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                },
-                "other": {
-                  "description": "Other variables, e.g. $some_variables",
-                  "anyOf": [
-                    {"$ref": "#/definitions/syntax_color"},
-                    {"$ref": "#/definitions/syntax_value"}
-                  ]
-                }
-              }
+          "additionalProperties": {
+            "anyOf": [
+              {"$ref": "#/definitions/syntax_color"},
+              {"$ref": "#/definitions/syntax_value"}
+            ]
+          },
+          "properties": {
+            "foreground": {"$ref": "#/definitions/syntax_color"},
+            "fontStyle": {"$ref": "#/definitions/syntax_font_style"},
+            "parameter": {
+              "description": "Parameter",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "language": {
+              "description": "Reserved language variable, e.g. this, super, self, etc.",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
+            },
+            "other": {
+              "description": "Other variables, e.g. $some_variables",
+              "anyOf": [
+                {"$ref": "#/definitions/syntax_color"},
+                {"$ref": "#/definitions/syntax_value"}
+              ]
             }
-          ]
+          }
         }
       ]
     }
