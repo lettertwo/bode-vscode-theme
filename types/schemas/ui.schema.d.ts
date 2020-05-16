@@ -10,6 +10,8 @@ export interface UiSchema {
   border: string;
   background: string;
   backgroundAlt: string;
+  selection: string;
+  selectionAlt: string;
   accent: string;
   accentAlt: string;
   secondaryAccent: string;
