@@ -1,6 +1,6 @@
 {
   "comment": {
-    "foreground": "#797979",
+    "foreground": "#7E7F83",
     "fontStyle": "italic"
   },
   "constant": {
@@ -27,7 +27,7 @@
   },
   "markup": {
     "foreground": "#cecbb8",
-    "heading": "#66CCE1",
+    "heading": "#79accd",
     "underline": "#c3d0e0",
     "bold": {
       "fontStyle": "bold"

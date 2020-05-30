@@ -17,6 +17,8 @@
     "positive": {"type": "string", "format": "color-hex"},
     "negative": {"type": "string", "format": "color-hex"},
     "warning": {"type": "string", "format": "color-hex"},
+    "added": {"type": "string", "format": "color-hex"},
+    "removed": {"type": "string", "format": "color-hex"},
     "modified": {"type": "string", "format": "color-hex"},
     "lightText": {"type": "string", "format": "color-hex"},
     "darkText": {"type": "string", "format": "color-hex"}
@@ -35,6 +37,8 @@
     "tertiaryAccent",
     "positive",
     "negative",
+    "added",
+    "removed",
     "warning",
     "modified",
     "lightText",

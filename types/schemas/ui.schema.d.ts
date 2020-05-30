@@ -20,6 +20,8 @@ export interface UiSchema {
   positive: string;
   negative: string;
   warning: string;
+  added: string;
+  removed: string;
   modified: string;
   lightText: string;
   darkText: string;
