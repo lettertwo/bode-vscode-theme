@@ -1,33 +1,40 @@
 import {promises as fs} from 'fs';
 import path from 'path';
-import mustache from 'mustache';
+import * as Theme from './Theme';
+import {render as renderDefault} from './render';
 
-const templatePath = path.resolve(__dirname, 'template.json');
 const themesDir = path.resolve(__dirname, 'themes');
 const buildDir = path.resolve(__dirname, '../themes');
-const themeFileRegex = /\.(?:json$)|(?:[jt]s$)/;
 const readdirOptions = {withFileTypes: true} as const;
 
 export default async function build(): Promise<void> {
-  const template = await fs.readFile(templatePath, 'utf8');
   for (const themeDir of await fs.readdir(themesDir, readdirOptions)) {
     if (themeDir.isDirectory()) {
-      // TODO: narrow this type?
-      const themeValues: Record<string, unknown> = {};
       const themePath = path.resolve(themesDir, themeDir.name);
-      for (const themeFile of await fs.readdir(themePath, readdirOptions)) {
-        if (
-          themeFile.isFile() &&
-          themeFileRegex.test(path.extname(themeFile.name))
-        ) {
-          Object.assign(
-            themeValues,
-            await import(path.resolve(themePath, themeFile.name)),
-          );
-        }
+      const themeValues: Theme.ThemeConfig = {
+        name: path.basename(themeDir.name),
+        ansi: (await import(path.resolve(themePath, 'ansi.json'))).default,
+        syntax: (await import(path.resolve(themePath, 'syntax.json'))).default,
+        ui: (await import(path.resolve(themePath, 'ui.json'))).default,
+      };
+
+      Theme.validate(themeValues);
+
+      let render = renderDefault;
+      try {
+        let customRender = await import(path.resolve(themePath, 'render'));
+        if ('render' in customRender) customRender = customRender.render;
+        else if ('default' in customRender) customRender = customRender.default;
+        else customRender = null;
+        if (customRender) render = customRender;
+      } catch {
+        /* boop! */
       }
-      themeValues.name = path.basename(themeDir.name);
-      const result = mustache.render(template, themeValues);
+
+      const theme = Theme.create(themeValues);
+      // TODO: validate rendered theme?
+      const result = JSON.stringify(render(theme), null, 2);
+
       const out = path.join(buildDir, `${themeValues.name}-color-theme.json`);
       await fs.writeFile(out, result);
       console.log(`rendered ${themeDir.name} to ${out}`);
@@ -36,5 +43,8 @@ export default async function build(): Promise<void> {
 }
 
 if (typeof require !== 'undefined' && require.main === module) {
-  build();
+  build().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
 }

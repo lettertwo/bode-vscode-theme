@@ -47,7 +47,6 @@
     }
   },
 
-  "additionalProperties": false,
   "required": [
     "comment",
     "constant",
@@ -61,6 +60,13 @@
     "support",
     "variable"
   ],
+
+  "additionalProperties": {
+    "anyOf": [
+      {"$ref": "#/definitions/syntax_color"},
+      {"$ref": "#/definitions/syntax_value"}
+    ]
+  },
 
   "properties": {
     "comment": {

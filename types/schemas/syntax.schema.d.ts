@@ -513,6 +513,7 @@ export interface SyntaxSchema {
         other?: SyntaxColor | SyntaxValue;
         [k: string]: (SyntaxColor | SyntaxValue) | undefined;
       };
+  [k: string]: (SyntaxColor | SyntaxValue) | undefined;
 }
 export interface SyntaxValue {
   foreground?: SyntaxColor;
