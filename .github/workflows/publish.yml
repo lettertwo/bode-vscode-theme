@@ -1,0 +1,31 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.0.0'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: npm ci
+      - name: Add node modules bin to system path
+        run: echo "::add-path::./node_modules/.bin"
+      - name: Publish
+        run: vsce publish --packagePath ./dist/bode-vscode-theme.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
