@@ -16,7 +16,7 @@
       {
         "label": "Bode",
         "uiTheme": "vs-dark",
-        "path": "./themes/bode-color-theme.json"
+        "path": "./build/bode-color-theme.json"
       }
     ]
   },

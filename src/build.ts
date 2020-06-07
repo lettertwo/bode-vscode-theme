@@ -3,11 +3,17 @@ import path from 'path';
 import * as Theme from './Theme';
 import {render as renderDefault} from './render';
 
-const themesDir = path.resolve(__dirname, 'themes');
-const buildDir = path.resolve(__dirname, '../themes');
+const themesDir = path.resolve(__dirname, '../themes');
+const buildDir = path.resolve(__dirname, '../build');
 const readdirOptions = {withFileTypes: true} as const;
 
 export default async function build(): Promise<void> {
+  try {
+    await fs.access(buildDir);
+  } catch {
+    await fs.mkdir(buildDir);
+  }
+
   for (const themeDir of await fs.readdir(themesDir, readdirOptions)) {
     if (themeDir.isDirectory()) {
       const themePath = path.resolve(themesDir, themeDir.name);
