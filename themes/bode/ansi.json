@@ -4,7 +4,7 @@
     "cyan": "#79accd",
     "green": "#CCE163",
     "magenta": "#DF5C8B",
-    "red": "#F92672",
+    "red": "#DF5C8B",
     "yellow": "#edd892"
   },
 
@@ -13,7 +13,7 @@
     "cyan": "#66D9EF",
     "green": "#86DE8F",
     "magenta": "#FF5794",
-    "red": "#F18942",
+    "red": "#F92672",
     "yellow": "#FFF26D"
   }
 }
