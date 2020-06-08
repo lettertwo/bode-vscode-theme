@@ -43,17 +43,14 @@
     "definition": {
       "comment": "#797979",
       "tag": "#c3d0e0",
-      "string": {
-        "fontStyle": "italic"
-      }
+      "string": "#edd892"
     }
   },
   "storage": {
     "foreground": "#cce163"
   },
   "string": {
-    "foreground": "#cecbb8",
-    "fontStyle": "italic"
+    "foreground": "#edd892"
   },
   "support": {
     "foreground": "#79accd",

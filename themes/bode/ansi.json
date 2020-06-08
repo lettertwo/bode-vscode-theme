@@ -5,7 +5,7 @@
     "green": "#CCE163",
     "magenta": "#DF5C8B",
     "red": "#F92672",
-    "yellow": "#FFF26D"
+    "yellow": "#edd892"
   },
 
   "bright": {
@@ -14,6 +14,6 @@
     "green": "#86DE8F",
     "magenta": "#FF5794",
     "red": "#F18942",
-    "yellow": "#D3EA4E"
+    "yellow": "#FFF26D"
   }
 }
