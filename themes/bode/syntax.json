@@ -37,11 +37,10 @@
     "inline": "#cce163"
   },
   "punctuation": {
-    "foreground": "#cce163",
+    "foreground": "#c3d0e0",
     "fontStyle": "bold",
     "definition": {
       "comment": "#797979",
-      "tag": "#c3d0e0",
       "string": "#edd892"
     }
   },
