@@ -4,14 +4,13 @@
     "fontStyle": "italic"
   },
   "constant": {
-    "foreground": "#67a1df",
-    "numeric": "#aa77c3"
+    "foreground": "#67a1df"
   },
   "entity": {
     "foreground": "#cecbb8",
     "name": {
       "section": "#c3d0e0",
-      "function": "#bfd8bd",
+      "function": "#aa77c3",
       "tag": "#79accd",
       "type": "#c3d0e0"
     }
